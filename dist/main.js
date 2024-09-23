@@ -22966,6 +22966,16 @@ function ranges(linenos) {
 }
 
 function comment(lcov, options) {
+	console.log("h2", h2(options.title));
+	console.log("options.base", options.base);
+	console.log("options.head", options.head);
+	console.log("options.title", options.title);
+	console.log("table", table(tbody(tr(th(percentage(lcov).toFixed(2), "%")))));
+	console.log(
+		"details",
+		details(summary("Coverage Report"), tabulate(lcov, options)),
+	);
+	console.log("fragment", tabulate(lcov, options));
 	return fragment(
 		options.title ? h2(options.title) : "",
 		options.base
@@ -22987,8 +22997,6 @@ function comment(lcov, options) {
 }
 
 function diff(lcov, before, options) {
-	console.log("before = ", before, !before);
-
 	if (!before) {
 		return comment(lcov, options)
 	}
@@ -23156,13 +23164,13 @@ async function main$1() {
 	}
 
 	const lcov = await parse$2(raw);
+
 	const baselcov = baseRaw && (await parse$2(baseRaw));
+
 	const { body, coverageDiff } = diff(lcov, baselcov, options);
-	console.log("body", body);
-	console.log(`lcov = `, lcov);
 
 	const comment = body.substring(0, MAX_COMMENT_CHARS);
-	console.log(`Comment`, comment);
+
 	if (shouldDeleteOldComments) {
 		await deleteOldComments(githubClient, options, github_1);
 	}
