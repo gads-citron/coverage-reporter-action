@@ -45,7 +45,7 @@ export function diff(lcov, before, options) {
 			tbody(
 				tr(
 					th(pafter.toFixed(2), "%"),
-					th(arrow, " ", plus, pdiff.toFixed(2), "%"),
+					th(arrow, " ", plus, coverageDiff.toFixed(2), "%"),
 				),
 			),
 		),
