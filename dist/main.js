@@ -22966,7 +22966,7 @@ function ranges(linenos) {
 }
 
 function comment(lcov, options) {
-	const frag = fragment(
+	return fragment(
 		options.title ? h2(options.title) : "",
 		options.base
 			? `Coverage after merging ${b(options.head)} into ${b(
@@ -22983,14 +22983,12 @@ function comment(lcov, options) {
 			),
 			tabulate(lcov, options),
 		),
-	);
-	console.log(frag);
-	return frag
+	)
 }
 
 function diff(lcov, before, options) {
 	if (!before) {
-		return comment(lcov, options)
+		return { body: comment(lcov, options), coverageDiff: 0 }
 	}
 
 	const pbefore = percentage(before);
