@@ -23029,6 +23029,8 @@ function comment(lcov, options) {
 }
 
 function diff(lcov, before, options) {
+	console.log("before = ", before, !before);
+
 	if (!before) {
 		return comment(lcov, options)
 	}
