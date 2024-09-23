@@ -22966,8 +22966,7 @@ function ranges(linenos) {
 }
 
 function comment(lcov, options) {
-	console.log("fragment", JSON.stringify(tabulate(lcov, options)));
-	const fragment = fragment(
+	const frag = fragment(
 		options.title ? h2(options.title) : "",
 		options.base
 			? `Coverage after merging ${b(options.head)} into ${b(
@@ -22985,8 +22984,8 @@ function comment(lcov, options) {
 			tabulate(lcov, options),
 		),
 	);
-	console.log("fragment", JSON.stringify(fragment));
-	return fragment
+	console.log(frag);
+	return frag
 }
 
 function diff(lcov, before, options) {
@@ -23010,7 +23009,7 @@ function diff(lcov, before, options) {
 			tbody(
 				tr(
 					th(pafter.toFixed(2), "%"),
-					th(arrow, " ", plus, coverageDiff.toFixed(2), "%"),
+					th(arrow, " ", plus, pdiff.toFixed(2), "%"),
 				),
 			),
 		),

@@ -4,8 +4,7 @@ import { percentage } from "./lcov"
 import { tabulate } from "./tabulate"
 
 export function comment(lcov, options) {
-	console.log("fragment", JSON.stringify(tabulate(lcov, options)))
-	const fragment = fragment(
+	const frag = fragment(
 		options.title ? h2(options.title) : "",
 		options.base
 			? `Coverage after merging ${b(options.head)} into ${b(
@@ -23,8 +22,8 @@ export function comment(lcov, options) {
 			tabulate(lcov, options),
 		),
 	)
-	console.log("fragment", JSON.stringify(fragment))
-	return fragment
+	console.log(frag)
+	return frag
 }
 
 export function diff(lcov, before, options) {
@@ -48,7 +47,7 @@ export function diff(lcov, before, options) {
 			tbody(
 				tr(
 					th(pafter.toFixed(2), "%"),
-					th(arrow, " ", plus, coverageDiff.toFixed(2), "%"),
+					th(arrow, " ", plus, pdiff.toFixed(2), "%"),
 				),
 			),
 		),
