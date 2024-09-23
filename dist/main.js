@@ -22608,48 +22608,6 @@ var core_14 = core$2.group;
 var core_15 = core$2.saveState;
 var core_16 = core$2.getState;
 
-const REQUESTED_COMMENTS_PER_PAGE = 20;
-
-async function deleteOldComments(github, options, context) {
-	const existingComments = await getExistingComments(github, options, context);
-	for (const comment of existingComments) {
-		core_8(`Deleting comment: ${comment.id}`);
-		try {
-			await github.issues.deleteComment({
-				owner: context.repo.owner,
-				repo: context.repo.repo,
-				comment_id: comment.id,
-			});
-		} catch (error) {
-			console.error(error);
-		}
-	}
-}
-
-async function getExistingComments(github, options, context) {
-	let page = 0;
-	let results = [];
-	let response;
-	do {
-		response = await github.issues.listComments({
-			issue_number: context.issue.number,
-			owner: context.repo.owner,
-			repo: context.repo.repo,
-			per_page: REQUESTED_COMMENTS_PER_PAGE,
-			page: page,
-		});
-		results = results.concat(response.data);
-		page++;
-	} while (response.data.length === REQUESTED_COMMENTS_PER_PAGE)
-
-	return results.filter(
-		comment =>
-			!!comment.user &&
-			(!options.title || comment.body.includes(options.title)) &&
-			comment.body.includes("Coverage Report"),
-	)
-}
-
 function tag(name) {
 	return function(...children) {
 		const props =
@@ -23068,6 +23026,48 @@ function diff(lcov, before, options) {
 	return { body, coverageDiff }
 }
 
+const REQUESTED_COMMENTS_PER_PAGE = 20;
+
+async function deleteOldComments(github, options, context) {
+	const existingComments = await getExistingComments(github, options, context);
+	for (const comment of existingComments) {
+		core_8(`Deleting comment: ${comment.id}`);
+		try {
+			await github.issues.deleteComment({
+				owner: context.repo.owner,
+				repo: context.repo.repo,
+				comment_id: comment.id,
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	}
+}
+
+async function getExistingComments(github, options, context) {
+	let page = 0;
+	let results = [];
+	let response;
+	do {
+		response = await github.issues.listComments({
+			issue_number: context.issue.number,
+			owner: context.repo.owner,
+			repo: context.repo.repo,
+			per_page: REQUESTED_COMMENTS_PER_PAGE,
+			page: page,
+		});
+		results = results.concat(response.data);
+		page++;
+	} while (response.data.length === REQUESTED_COMMENTS_PER_PAGE)
+
+	return results.filter(
+		comment =>
+			!!comment.user &&
+			(!options.title || comment.body.includes(options.title)) &&
+			comment.body.includes("Coverage Report"),
+	)
+}
+
 // Get list of changed files
 async function getChangedFiles(githubClient, options, context) {
 	if (!options.commit || !options.baseCommit) {
@@ -23134,7 +23134,10 @@ async function main$1() {
 		workingDir,
 	};
 
-	if (github_1.eventName === "pull_request" || github_1.eventName === "pull_request_target") {
+	if (
+		github_1.eventName === "pull_request" ||
+		github_1.eventName === "pull_request_target"
+	) {
 		options.commit = github_1.payload.pull_request.head.sha;
 		options.baseCommit = github_1.payload.pull_request.base.sha;
 		options.head = github_1.payload.pull_request.head.ref;
@@ -23156,14 +23159,17 @@ async function main$1() {
 	const baselcov = baseRaw && (await parse$2(baseRaw));
 
 	const { body, coverageDiff } = diff(lcov, baselcov, options);
-
+	console.log(body);
 	const comment = body.substring(0, MAX_COMMENT_CHARS);
-
+	console.log(`Comment`, comment);
 	if (shouldDeleteOldComments) {
 		await deleteOldComments(githubClient, options, github_1);
 	}
 
-	if (github_1.eventName === "pull_request" || github_1.eventName === "pull_request_target") {
+	if (
+		github_1.eventName === "pull_request" ||
+		github_1.eventName === "pull_request_target"
+	) {
 		await githubClient.issues.createComment({
 			repo: github_1.repo.repo,
 			owner: github_1.repo.owner,

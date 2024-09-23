@@ -1,13 +1,13 @@
 import { GitHub, context } from "@actions/github"
 
 import core from "@actions/core"
-import { deleteOldComments } from "./delete_old_comments"
-import { diff } from "./comment"
 import { promises as fs } from "fs"
-import { getChangedFiles } from "./get_changes"
-import { normalisePath } from "./util"
-import { parse } from "./lcov"
 import path from "path"
+import { diff } from "./comment"
+import { deleteOldComments } from "./delete_old_comments"
+import { getChangedFiles } from "./get_changes"
+import { parse } from "./lcov"
+import { normalisePath } from "./util"
 
 const MAX_COMMENT_CHARS = 65536
 
@@ -47,7 +47,10 @@ async function main() {
 		workingDir,
 	}
 
-	if (context.eventName === "pull_request" || context.eventName === "pull_request_target") {
+	if (
+		context.eventName === "pull_request" ||
+		context.eventName === "pull_request_target"
+	) {
 		options.commit = context.payload.pull_request.head.sha
 		options.baseCommit = context.payload.pull_request.base.sha
 		options.head = context.payload.pull_request.head.ref
@@ -69,14 +72,17 @@ async function main() {
 	const baselcov = baseRaw && (await parse(baseRaw))
 
 	const { body, coverageDiff } = diff(lcov, baselcov, options)
-
+	console.log(body)
 	const comment = body.substring(0, MAX_COMMENT_CHARS)
-
+	console.log(`Comment`, comment)
 	if (shouldDeleteOldComments) {
 		await deleteOldComments(githubClient, options, context)
 	}
 
-	if (context.eventName === "pull_request" || context.eventName === "pull_request_target") {
+	if (
+		context.eventName === "pull_request" ||
+		context.eventName === "pull_request_target"
+	) {
 		await githubClient.issues.createComment({
 			repo: context.repo.repo,
 			owner: context.repo.owner,
