@@ -23157,9 +23157,10 @@ async function main$1() {
 
 	const lcov = await parse$2(raw);
 	const baselcov = baseRaw && (await parse$2(baseRaw));
-
 	const { body, coverageDiff } = diff(lcov, baselcov, options);
-	console.log(body);
+	console.log("body", body);
+	console.log(`lcov = `, lcov);
+
 	const comment = body.substring(0, MAX_COMMENT_CHARS);
 	console.log(`Comment`, comment);
 	if (shouldDeleteOldComments) {
