@@ -23132,7 +23132,7 @@ async function main$1() {
 		workingDir,
 	};
 
-	if (github_1.eventName === "pull_request") {
+	if (github_1.eventName === "pull_request" || github_1.eventName === "pull_request_target") {
 		options.commit = github_1.payload.pull_request.head.sha;
 		options.baseCommit = github_1.payload.pull_request.base.sha;
 		options.head = github_1.payload.pull_request.head.ref;
@@ -23161,7 +23161,7 @@ async function main$1() {
 		await deleteOldComments(githubClient, options, github_1);
 	}
 
-	if (github_1.eventName === "pull_request") {
+	if (github_1.eventName === "pull_request" || github_1.eventName === "pull_request_target") {
 		await githubClient.issues.createComment({
 			repo: github_1.repo.repo,
 			owner: github_1.repo.owner,
